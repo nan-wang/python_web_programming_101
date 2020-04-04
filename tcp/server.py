@@ -6,7 +6,8 @@ PORT = 2011
 BUFSIZE = 1025
 ADDR = (HOST, PORT)
 
-with socket(AF_INET, SOCK_STREAM) as tcpSerSock:
+tcpSerSock = socket(AF_INET, SOCK_STREAM)
+try:
     tcpSerSock.bind(ADDR)
     tcpSerSock.listen(5)
 
@@ -19,6 +20,11 @@ with socket(AF_INET, SOCK_STREAM) as tcpSerSock:
             data = tcpCliSock.recv(BUFSIZE)
             if not data:
                 break
-            tcpCliSock.send(
-                bytes('[{}] {}'.format(ctime(), data.decode('utf8')), 'utf8'))
+            recv_msg = data.decode('utf8')
+            ret_msg = '[{}] {}'.format(ctime(), recv_msg)
+            print('recv: {}'.format(recv_msg))
+            print('ret: {}'.format(ret_msg))
+            tcpCliSock.send(bytes(ret_msg, 'utf8'))
         tcpCliSock.close()
+finally:
+    tcpSerSock.close()
